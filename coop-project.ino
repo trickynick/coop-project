@@ -20,6 +20,7 @@ unsigned long motionTime; //Start the clock
 
 void loop()
 {
+  
 
   int reading = analogRead(tempPin);
 
@@ -37,6 +38,17 @@ void loop()
 
   float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
   Serial.print(temperatureF); Serial.println(" degrees F");
-  Serial.print(motionTime);
+  Serial.println(motionTime);
   delay(1000);
+  
+  float lightValue = analogRead(lightPin);
+  Serial.print(lightValue); Serial.println(" units of photo-sensor");
+  
+  if (lightValue < 200)
+  {
+     // if PIR senses motion, save time
+     motionTime = millis();     
+     Serial.println("UPDARING");
+  }  
+  
 }
