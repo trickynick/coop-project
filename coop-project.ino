@@ -19,6 +19,7 @@ void setup()
 }
 
 unsigned long motionTime; //Start the clock
+unsigned long now;
 
 // POSSIBLE STATES
 enum STATE_T {
@@ -34,10 +35,11 @@ int nextState; // don't initialize
 
 void loop()
 {
-
+  // these are outside the state machine and always update
 
   // take new data
   float lightValue = analogRead(lightPin);
+  now = millis();
 
 
 
@@ -46,14 +48,24 @@ void loop()
   {
   case STATE_OPEN:
     Serial.println("OPEN");
-    if(lightValue < 330)
+    if(lightValue < 330) // higher is brighter
     {
+      motionTime = now; // save "now" into cubbyhole
+      nextState = STATE_WAITING;
     }
     break;
   case STATE_WAITING:
     Serial.println("WAITING");
+    if((now-motionTime) > 2000)
+    {
+      nextState = STATE_CLOSED;
+    }
     break;
   case STATE_CLOSED:
+    if(lightValue > 400) // highet is brither
+    {
+      nextState = STATE_OPEN;
+    }
     Serial.println("CLOSED");
     break;
   default:
@@ -102,4 +114,5 @@ void loop()
   //  }  
 
 }
+
 
