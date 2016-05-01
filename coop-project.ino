@@ -35,12 +35,14 @@ int nextState; // don't initialize
 
 void loop()
 {
+  // START STATE MACHINE
   // these are outside the state machine and always update
 
   // take new data
   float lightValue = analogRead(lightPin);
   now = millis();
-
+  //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
+ 
 
 
   nextState = state;
@@ -77,7 +79,7 @@ void loop()
 
   delay(500);
 
-
+  // END STATE MACHINE
 
 
 
@@ -102,16 +104,7 @@ void loop()
   //  Serial.print(temperatureF); Serial.println(" degrees F");
   //  Serial.println(motionTime);
   //  delay(1000);
-  //  
-  //  float lightValue = analogRead(lightPin);
-  //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
-  //  
-  //  if (lightValue < 200)
-  //  {
-  //     // if PIR senses motion, save time
-  //     motionTime = millis();     
-  //     Serial.println("UPDARING");
-  //  }  
+
 
 }
 
