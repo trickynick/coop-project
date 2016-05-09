@@ -64,7 +64,7 @@ void loop()
       break;
     case STATE_WAITING:
       Serial.println("WAITING");
-      if ((now - motionTime) > 2000)
+      if ((now - motionTime) >= 2000)
       {
         nextState = STATE_CLOSED;
       }
@@ -88,10 +88,14 @@ void loop()
         nextState = STATE_YUCK;
         motionTime = now;
       }
+      if(openPinValue == HIGH && closePinValue == HIGH)
+      {
+        nextState = STATE_HOTDOG;
+      }
       break;
     case STATE_YUMM:
       Serial.println("YUMM");
-      if ((now - motionTime) > 2000)
+      if ((now - motionTime) >= 2000)
       {
         //motionTime = now;
         nextState = STATE_HOTDOG;
@@ -99,7 +103,7 @@ void loop()
       break;
     case STATE_YUCK:
       Serial.println("YUCK");
-      if ((now - motionTime) > 2000)
+      if ((now - motionTime) >= 2000)
       {
         // motionTime = now;
         nextState = STATE_HOTDOG;
