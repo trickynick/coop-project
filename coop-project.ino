@@ -14,7 +14,7 @@ void setup()
   pinMode(timePin, INPUT);
   pinMode(lightPin, INPUT);
   pinMode(closePin, INPUT);
-  pinMode(openPin, OUTPUT);
+  pinMode(openPin, INPUT);
   Serial.begin(9600);
 }
 
@@ -27,7 +27,8 @@ enum STATE_T {
   STATE_WAITING,
   STATE_CLOSED,
   STATE_HOTDOG,
-  STATE_YUMM
+  STATE_YUMM,
+  STATE_YUCK
 };
 
 
@@ -45,47 +46,68 @@ void loop()
   float lightValue = analogRead(lightPin);
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
+  int closePinValue = digitalRead(closePin);
+  int openPinValue = digitalRead(openPin);
 
 
 
   nextState = state;
-  switch(state)
+  switch (state)
   {
-  case STATE_OPEN:
-    Serial.println("OPEN");
-    if(lightValue < 330) // higher is brighter
-    {
-      motionTime = now; // save "now" into cubbyhole
-      nextState = STATE_WAITING;
-    }
-    break;
-  case STATE_WAITING:
-    Serial.println("WAITING");
-    if((now-motionTime) > 2000)
-    {
-      nextState = STATE_CLOSED;
-    }
-    break;
-  case STATE_CLOSED:
-    Serial.println("CLOSED");
-    if(lightValue > 400) // highet is brither
-    {
-      nextState = STATE_HOTDOG;
-    }
-    break;
+    case STATE_OPEN:
+      Serial.println("OPEN");
+      if (lightValue < 330) // higher is brighter
+      {
+        motionTime = now; // save "now" into cubbyhole
+        nextState = STATE_WAITING;
+      }
+      break;
+    case STATE_WAITING:
+      Serial.println("WAITING");
+      if ((now - motionTime) > 2000)
+      {
+        nextState = STATE_CLOSED;
+      }
+      break;
+    case STATE_CLOSED:
+      Serial.println("CLOSED");
+      if (lightValue > 400) // highet is brither
+      {
+        nextState = STATE_HOTDOG;
+      }
+      break;
     case STATE_HOTDOG:
-    Serial.println("HOTDOG");
-    if(closePin = HIGH)
-    { 
-      nextState = STATE_YUMM;
-    }
-    break;
+      Serial.println("HOTDOG");
+      if (closePinValue == HIGH)
+      {
+        nextState = STATE_YUMM;
+        motionTime = now;
+      }
+      if (openPinValue == HIGH)
+      {
+        nextState = STATE_YUCK;
+        motionTime = now;
+      }
+      break;
     case STATE_YUMM:
-    Serial.println("YUMM");
-    break;
-  default:
-    Serial.println("SOMETHING WRONG");
-    break;
+      Serial.println("YUMM");
+      if ((now - motionTime) > 2000)
+      {
+        //motionTime = now;
+        nextState = STATE_HOTDOG;
+      }
+      break;
+    case STATE_YUCK:
+      Serial.println("YUCK");
+      if ((now - motionTime) > 2000)
+      {
+        // motionTime = now;
+        nextState = STATE_HOTDOG;
+      }
+      break;
+    default:
+      Serial.println("SOMETHING WRONG");
+      break;
   }
 
   state = nextState;
