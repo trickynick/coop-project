@@ -13,7 +13,7 @@ void setup()
   pinMode(tempPin, INPUT);
   pinMode(timePin, INPUT);
   pinMode(lightPin, INPUT);
-  pinMode(closePin, OUTPUT);
+  pinMode(closePin, INPUT);
   pinMode(openPin, OUTPUT);
   Serial.begin(9600);
 }
@@ -25,7 +25,9 @@ unsigned long now;
 enum STATE_T {
   STATE_OPEN,
   STATE_WAITING,
-  STATE_CLOSED
+  STATE_CLOSED,
+  STATE_HOTDOG,
+  STATE_YUMM
 };
 
 
@@ -39,10 +41,11 @@ void loop()
   // these are outside the state machine and always update
 
   // take new data
+  float tempValue = analogRead(tempPin);
   float lightValue = analogRead(lightPin);
   now = millis();
   //  Serial.print(lightValue); Serial.println(" units of photo-sensor");
- 
+
 
 
   nextState = state;
@@ -64,11 +67,21 @@ void loop()
     }
     break;
   case STATE_CLOSED:
+    Serial.println("CLOSED");
     if(lightValue > 400) // highet is brither
     {
-      nextState = STATE_OPEN;
+      nextState = STATE_HOTDOG;
     }
-    Serial.println("CLOSED");
+    break;
+    case STATE_HOTDOG:
+    Serial.println("HOTDOG");
+    if(closePin = HIGH)
+    { 
+      nextState = STATE_YUMM;
+    }
+    break;
+    case STATE_YUMM:
+    Serial.println("YUMM");
     break;
   default:
     Serial.println("SOMETHING WRONG");
